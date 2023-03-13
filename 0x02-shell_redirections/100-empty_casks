@@ -1,2 +1,2 @@
 #!/bin/bash
-find ./* -type fa -empty
+find ./* -type f -empty -a
