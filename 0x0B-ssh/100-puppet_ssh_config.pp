@@ -1,4 +1,4 @@
-!/usr/bin/env bash
+#!/usr/bin/env bash
 # Automating my Tasks using Puppet
 
 file { '/etc/ssh/ssh_config':
