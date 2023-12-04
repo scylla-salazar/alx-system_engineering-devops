@@ -1,25 +1,30 @@
 #!/usr/bin/env bash
-# Customizing a 404-error_page
+# Installs Nginx with the following configurations:
+#+    Listens on port 80.
+#+    Returns a page containing "Hello World!" when queried
+#++    at the root with a curl GET request.
 
-# Updating Packages before performing installations
-sudo apt-get update
-sudo apt-get install -y nginx
+#  updates the package lists for available software packages.
+apt-get update
+# installs the Nginx web server.
+apt-get install -y nginx
 
-# Creating an index.html page
+sudo ufw allow 'Nginx HTTP'
+
+#  sets the content of the index.html file to "Hello World!" using the echo command.
 echo "Hello World!" | sudo tee /var/www/html/index.html
 
 # Performing a "moved permanently redirection" (301)
-new_string="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/scylla-salazar permanent;"
+new_strings="server_name _;\n\n\tlocation \/redirect_me {\n\t\treturn 301 https:\/\/www.google.com;\n\t}"
+
+sudo sed -i "s/server_name _;/$new_strings/" /etc/nginx/sites-enabled/default
+
+# COnfiguring Error file
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/custom_404_page.html
+
+new_string="server_name _;\n\n\terror_page 404 \/custom_404_page.html;\n\tlocation = \/custom_404_page.html"
+
 sudo sed -i "s/server_name _;/$new_string/" /etc/nginx/sites-enabled/default
 
-# Creating a 404 Custom error page
-echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
-new_string="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
-
-sudo sed -i "s/listen 80 default_server;/$new_string/" /etc/nginx/sites-enabled/default
-
-# Testing configurations for syntax errors
-sudo nginx -t
-
-# restart nginx after implementing changes
+# Restart nginx after implementing changes
 sudo service nginx restart

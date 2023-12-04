@@ -9,41 +9,15 @@ apt-get update
 # installs the Nginx web server.
 apt-get install -y nginx
 
-# Creates the /etc/nginx/html directory, which will serve as the document root directory for Nginx.
-mkdir /etc/nginx/html
-#  creates an empty index.html file inside the /etc/nginx/html directory.
-touch /etc/nginx/html/index.html
+sudo ufw allow 'Nginx HTTP'
+
 #  sets the content of the index.html file to "Hello World!" using the echo command.
-echo "Hello World!" > /etc/nginx/html/index.html
-# Sets Nginx to listen on port 80 and serve files from the /etc/nginx/html directory.
-printf %s "server {
-     listen      80;
-     listen      [::]:80 default_server;
-     root        /etc/nginx/html;
-     index       index.html index.htm;
-}
-" > /etc/nginx/sites-available/default
+echo "Hello World!" | sudo tee /var/www/html/index.html
 
-# Configure a new server block for redirection
-echo "server {
-    listen 80;
-    listen [::]:80;
+# Performing a "moved permanently redirection" (301)
+new_strings="server_name _;\n\n\tlocation \/redirect_me {\n\t\treturn 301 https:\/\/www.google.com;\n\t}"
 
-    root /var/www/html;
+sudo sed -i "s/server_name _;/$new_strings/" /etc/nginx/sites-enabled/default
 
-    # Add index.php to the list if you are using PHP
-    index index.html index.htm index.nginx-debian.html;
-
-    location /redirect_me {
-        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-    }
-}" | sudo tee /etc/nginx/sites-available/redirect
-
-# Enable the new site configuration
-sudo ln -s /etc/nginx/sites-available/redirect /etc/nginx/sites-enabled/
-
-
-# Test Nginx configuration and reload
-sudo nginx -t
-sudo service nginx reload
-
+# Restart nginx after implementing changes
+sudo service nginx restart
