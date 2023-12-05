@@ -54,5 +54,3 @@ service { 'nginx':
   ensure  => running,
   enable  => true,
   require => File['/etc/nginx/sites-available/default'],
-}
-
