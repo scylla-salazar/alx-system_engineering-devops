@@ -11,13 +11,13 @@ apt-get -y install haproxy
 # edit config file
 server_config=\
 "
-frontend  scylla-salazar_frontend
+frontend  besthor_frontend
         bind *:80
         mode http
-        default_backend scylla-salazar_backend
-backend scylla-salazar_backend
+        default_backend besthor_backend
+backend besthor_backend
         balance roundrobin
-        server 352277-web-01 100.25.158.120:80 check
+        server 352277-web-01 54.157.187.176:80 check
         server 352277-web-02 54.237.87.194:80 check
 "
 echo "$server_config" | sudo tee -a /etc/haproxy/haproxy.cfg
