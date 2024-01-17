@@ -23,7 +23,3 @@ def top_ten(subreddit):
             print("None")
     else:
         print("None")
-
-# Example usage:
-subreddit_name = "python"
-top_ten(subreddit_name)
